@@ -24,7 +24,7 @@ pub enum BuiltinFn {
 ///|
 pub enum LispExpr {
   Nil
-  Int(Int)
+  Int(Int32)
   Symbol(Symbol)
   Cons(LispExpr, LispExpr)
   Builtin(BuiltinFn)
@@ -34,7 +34,7 @@ pub enum LispExpr {
 ///|
 pub enum LispCode {
   Quote(LispExpr)
-  Var(Int, Int)
+  Var(Int32, Int32)
   Global(Symbol)
   If(LispCode, LispCode, LispCode)
   Application(LispCode, Array[LispCode])
