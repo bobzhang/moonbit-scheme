@@ -6,7 +6,7 @@ priv struct Runtime {
 
 ///|
 fn Runtime::new() -> Runtime {
-  let symbols : Map[String, Symbol] = {}
+  let symbols : Map[String, Symbol] = Map([])
   let t_symbol = Symbol::{
     name: "t",
     value: SymbolValue::Value(LispExpr::Nil),

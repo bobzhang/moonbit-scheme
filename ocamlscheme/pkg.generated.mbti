@@ -1,0 +1,75 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/ocamlscheme"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn eval_program(String) -> LispExpr raise
+
+pub fn eval_program_all(String) -> Array[LispExpr] raise
+
+pub fn expr_to_string(LispExpr) -> String
+
+// Errors
+#derive(Eq, @debug.Debug)
+pub(all) suberror EvalError {
+  EvalError(String)
+}
+pub impl Show for EvalError
+
+#derive(Eq, @debug.Debug)
+pub(all) suberror ParseError {
+  ParseError(String)
+}
+pub impl Show for ParseError
+
+// Types and methods
+pub enum BuiltinFn {
+  Plus
+  Minus
+  Mult
+  NumbersEqual
+  Less
+  Cons
+  Car
+  Cdr
+  NullP
+  Begin
+}
+
+pub enum LispCode {
+  Quote(LispExpr)
+  Var(Int32, Int32)
+  Global(Symbol)
+  If(LispCode, LispCode, LispCode)
+  Application(LispCode, Array[LispCode])
+  BuildClosure(LispCode)
+  Amb(Array[LispCode])
+  GlobalSet(Symbol, LispCode)
+  GlobalSetMacro(Symbol, LispCode)
+}
+
+pub enum LispExpr {
+  Nil
+  Int(Int32)
+  Symbol(Symbol)
+  Cons(LispExpr, LispExpr)
+  Builtin(BuiltinFn)
+  Closure(LispCode, Array[Array[LispExpr]])
+}
+
+pub(all) struct Symbol {
+  name : String
+  mut value : SymbolValue
+}
+
+pub enum SymbolValue {
+  Value(LispExpr)
+  Macro(LispExpr)
+}
+
+// Type aliases
+
+// Traits
