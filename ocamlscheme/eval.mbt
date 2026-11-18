@@ -7,14 +7,13 @@ fn symbol_value_value(symbol : Symbol) -> LispExpr raise EvalError {
 }
 
 ///|
-fn env_get(env : Env, depth : Int, index : Int) -> LispExpr raise EvalError {
+fn env_get(env : Env, depth : Int32, index : Int32) -> LispExpr raise EvalError {
   match env.get(depth) {
-    Some(frame) => {
+    Some(frame) =>
       match frame.get(index) {
         Some(value) => value
         None => raise EvalError("env index out of bounds")
       }
-    }
     None => raise EvalError("env depth out of bounds")
   }
 }
@@ -30,16 +29,26 @@ fn env_prepend(frame : Array[LispExpr], env : Env) -> Env {
 }
 
 ///|
-fn apply_value(rt : Runtime, func : LispExpr, args : Array[LispExpr]) -> Array[LispExpr] raise EvalError {
+fn apply_value(
+  rt : Runtime,
+  func : LispExpr,
+  args : Array[LispExpr],
+) -> Array[LispExpr] raise EvalError {
   match func {
     LispExpr::Builtin(builtin) => [apply_builtin(rt, builtin, args)]
-    LispExpr::Closure(code, closure_env) => eval_all(code, env_prepend(args, closure_env), rt)
+    LispExpr::Closure(code, closure_env) =>
+      eval_all(code, env_prepend(args, closure_env), rt)
     _ => raise EvalError("not a function")
   }
 }
 
 ///|
-fn eval_args_all(args : Array[LispCode], index : Int, env : Env, rt : Runtime) -> Array[Array[LispExpr]] raise EvalError {
+fn eval_args_all(
+  args : Array[LispCode],
+  index : Int32,
+  env : Env,
+  rt : Runtime,
+) -> Array[Array[LispExpr]] raise EvalError {
   if index == args.length() {
     let empty : Array[LispExpr] = []
     [empty]
@@ -62,7 +71,11 @@ fn eval_args_all(args : Array[LispCode], index : Int, env : Env, rt : Runtime) -
 }
 
 ///|
-fn eval_all(code : LispCode, env : Env, rt : Runtime) -> Array[LispExpr] raise EvalError {
+fn eval_all(
+  code : LispCode,
+  env : Env,
+  rt : Runtime,
+) -> Array[LispExpr] raise EvalError {
   match code {
     LispCode::Quote(value) => [value]
     LispCode::Global(symbol) => [symbol_value_value(symbol)]

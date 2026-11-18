@@ -1,5 +1,8 @@
 ///|
-fn macroexpand_list(rt : Runtime, list_expr : LispExpr) -> Array[LispExpr] raise EvalError {
+fn macroexpand_list(
+  rt : Runtime,
+  list_expr : LispExpr,
+) -> Array[LispExpr] raise EvalError {
   let items = list_to_array(list_expr)
   let expanded : Array[LispExpr] = []
   for item in items {
@@ -11,7 +14,7 @@ fn macroexpand_list(rt : Runtime, list_expr : LispExpr) -> Array[LispExpr] raise
 ///|
 fn macroexpand(rt : Runtime, expr : LispExpr) -> LispExpr raise EvalError {
   match expr {
-    LispExpr::Cons(LispExpr::Symbol(sym), args) => {
+    LispExpr::Cons(LispExpr::Symbol(sym), args) =>
       match sym.value {
         SymbolValue::Macro(macro_value) => {
           let expanded_args = macroexpand_list(rt, args)
@@ -23,8 +26,8 @@ fn macroexpand(rt : Runtime, expr : LispExpr) -> LispExpr raise EvalError {
         }
         _ => LispExpr::Cons(LispExpr::Symbol(sym), macroexpand(rt, args))
       }
-    }
-    LispExpr::Cons(car, cdr) => LispExpr::Cons(macroexpand(rt, car), macroexpand(rt, cdr))
+    LispExpr::Cons(car, cdr) =>
+      LispExpr::Cons(macroexpand(rt, car), macroexpand(rt, cdr))
     _ => expr
   }
 }

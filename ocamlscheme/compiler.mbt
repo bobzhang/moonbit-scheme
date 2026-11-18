@@ -2,7 +2,7 @@
 type CompileEnv = Array[Array[String]]
 
 ///|
-fn env_lookup(name : String, env : CompileEnv) -> (Int, Int)? {
+fn env_lookup(name : String, env : CompileEnv) -> (Int32, Int32)? {
   let mut depth = 0
   for frame in env {
     let mut index = 0
@@ -65,7 +65,11 @@ fn list_to_symbol_names(list : LispExpr) -> Array[String] raise EvalError {
 }
 
 ///|
-fn compile_application(func : LispExpr, args : LispExpr, env : CompileEnv) -> LispCode raise EvalError {
+fn compile_application(
+  func : LispExpr,
+  args : LispExpr,
+  env : CompileEnv,
+) -> LispCode raise EvalError {
   let arg_items = list_to_array(args)
   let compiled_args : Array[LispCode] = []
   for item in arg_items {
@@ -81,15 +85,14 @@ fn compile(expr : LispExpr, env : CompileEnv) -> LispCode raise EvalError {
     LispExpr::Int(_) => LispCode::Quote(expr)
     LispExpr::Builtin(_) => LispCode::Quote(expr)
     LispExpr::Closure(_, _) => LispCode::Quote(expr)
-    LispExpr::Symbol(sym) => {
+    LispExpr::Symbol(sym) =>
       match env_lookup(sym.name, env) {
         Some((depth, index)) => LispCode::Var(depth, index)
         None => LispCode::Global(sym)
       }
-    }
-    LispExpr::Cons(car, cdr) => {
+    LispExpr::Cons(car, cdr) =>
       match car {
-        LispExpr::Symbol(sym) => {
+        LispExpr::Symbol(sym) =>
           if sym.name == "quote" {
             match cdr {
               LispExpr::Cons(value, LispExpr::Nil) => LispCode::Quote(value)
@@ -97,8 +100,15 @@ fn compile(expr : LispExpr, env : CompileEnv) -> LispCode raise EvalError {
             }
           } else if sym.name == "if" {
             match cdr {
-              LispExpr::Cons(cond, LispExpr::Cons(cons, LispExpr::Cons(alt, LispExpr::Nil))) =>
-                LispCode::If(compile(cond, env), compile(cons, env), compile(alt, env))
+              LispExpr::Cons(
+                cond,
+                LispExpr::Cons(cons, LispExpr::Cons(alt, LispExpr::Nil)),
+              ) =>
+                LispCode::If(
+                  compile(cond, env),
+                  compile(cons, env),
+                  compile(alt, env),
+                )
               _ => raise EvalError("invalid if")
             }
           } else if sym.name == "lambda" {
@@ -119,22 +129,24 @@ fn compile(expr : LispExpr, env : CompileEnv) -> LispCode raise EvalError {
             LispCode::Amb(compiled)
           } else if sym.name == "define" {
             match cdr {
-              LispExpr::Cons(LispExpr::Symbol(name_sym), LispExpr::Cons(value, LispExpr::Nil)) =>
-                LispCode::GlobalSet(name_sym, compile(value, env))
+              LispExpr::Cons(
+                LispExpr::Symbol(name_sym),
+                LispExpr::Cons(value, LispExpr::Nil),
+              ) => LispCode::GlobalSet(name_sym, compile(value, env))
               _ => raise EvalError("invalid define")
             }
           } else if sym.name == "define-macro" {
             match cdr {
-              LispExpr::Cons(LispExpr::Symbol(name_sym), LispExpr::Cons(value, LispExpr::Nil)) =>
-                LispCode::GlobalSetMacro(name_sym, compile(value, env))
+              LispExpr::Cons(
+                LispExpr::Symbol(name_sym),
+                LispExpr::Cons(value, LispExpr::Nil),
+              ) => LispCode::GlobalSetMacro(name_sym, compile(value, env))
               _ => raise EvalError("invalid define-macro")
             }
           } else {
             compile_application(car, cdr, env)
           }
-        }
         _ => compile_application(car, cdr, env)
       }
-    }
   }
 }

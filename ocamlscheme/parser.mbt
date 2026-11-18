@@ -1,12 +1,12 @@
 ///|
 priv struct Reader {
   src : String
-  mut index : Int
+  mut index : Int32
 }
 
 ///|
 fn Reader::new(src : String) -> Reader {
-  { src, index: 0 }
+  { src, index: 0, }
 }
 
 ///|
@@ -75,7 +75,7 @@ fn Reader::expect(self : Reader, expected : Char) -> Unit raise ParseError {
 }
 
 ///|
-fn read_number(reader : Reader) -> Int {
+fn read_number(reader : Reader) -> Int32 {
   let mut value = 0
   while true {
     match reader.peek() {
@@ -176,7 +176,10 @@ fn read_expr_opt(reader : Reader, rt : Runtime) -> LispExpr? raise ParseError {
 }
 
 ///|
-fn parse_program(src : String, rt : Runtime) -> Array[LispExpr] raise ParseError {
+fn parse_program(
+  src : String,
+  rt : Runtime,
+) -> Array[LispExpr] raise ParseError {
   let reader = Reader::new(src)
   let exprs : Array[LispExpr] = []
   while true {

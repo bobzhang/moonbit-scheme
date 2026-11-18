@@ -1,5 +1,5 @@
 ///|
-fn expect_int(value : LispExpr) -> Int raise EvalError {
+fn expect_int(value : LispExpr) -> Int32 raise EvalError {
   match value {
     LispExpr::Int(i) => i
     _ => raise EvalError("expected int")
@@ -7,7 +7,11 @@ fn expect_int(value : LispExpr) -> Int raise EvalError {
 }
 
 ///|
-fn apply_builtin(rt : Runtime, builtin : BuiltinFn, args : Array[LispExpr]) -> LispExpr raise EvalError {
+fn apply_builtin(
+  rt : Runtime,
+  builtin : BuiltinFn,
+  args : Array[LispExpr],
+) -> LispExpr raise EvalError {
   match builtin {
     BuiltinFn::Plus => {
       let mut sum = 0
@@ -87,14 +91,17 @@ fn apply_builtin(rt : Runtime, builtin : BuiltinFn, args : Array[LispExpr]) -> L
         raise EvalError("null? expects one argument")
       }
       let arg = args[0]
-      if is_nil(arg) { rt.true_expr() } else { LispExpr::Nil }
+      if is_nil(arg) {
+        rt.true_expr()
+      } else {
+        LispExpr::Nil
+      }
     }
-    BuiltinFn::Begin => {
+    BuiltinFn::Begin =>
       if args.length() == 0 {
         LispExpr::Nil
       } else {
         args[args.length() - 1]
       }
-    }
   }
 }
