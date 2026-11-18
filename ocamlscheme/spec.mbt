@@ -2,10 +2,16 @@
 /// Spec for the Scheme interpreter (MoonBit port of ocamlscheme).
 
 ///|
-pub(all) suberror ParseError String derive(Show, Eq)
+#derive(Debug, Eq)
+pub(all) suberror ParseError {
+  ParseError(String)
+}
 
 ///|
-pub(all) suberror EvalError String derive(Show, Eq)
+#derive(Debug, Eq)
+pub(all) suberror EvalError {
+  EvalError(String)
+}
 
 ///|
 pub enum BuiltinFn {
@@ -75,4 +81,14 @@ pub fn eval_program_all(src : String) -> Array[LispExpr] raise {
 #declaration_only
 pub fn expr_to_string(expr : LispExpr) -> String {
   ...
+}
+
+///|
+pub impl Show for ParseError with fn output(self, logger) {
+  logger.write_string(@debug.to_string(self))
+}
+
+///|
+pub impl Show for EvalError with fn output(self, logger) {
+  logger.write_string(@debug.to_string(self))
 }

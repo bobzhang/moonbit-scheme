@@ -56,7 +56,7 @@ test "scheme difficult: amb subset sum" {
     #|      l)))
     #|
 
-  let results = eval_program_all(program)
+  let results = @ocamlscheme.eval_program_all(program)
   inspect(results.length(), content="1")
-  inspect(expr_to_string(results[0]), content="(17 27 58 86 125)")
+  inspect(@ocamlscheme.expr_to_string(results[0]), content="(17 27 58 86 125)")
 }

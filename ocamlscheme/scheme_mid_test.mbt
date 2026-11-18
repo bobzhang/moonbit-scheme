@@ -11,6 +11,6 @@ test "scheme mid: fib program" {
     #|(fib 27)
     #|
 
-  let result = eval_program(program)
-  inspect(expr_to_string(result), content="196418")
+  let result = @ocamlscheme.eval_program(program)
+  inspect(@ocamlscheme.expr_to_string(result), content="196418")
 }
